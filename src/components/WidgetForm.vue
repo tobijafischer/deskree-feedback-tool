@@ -47,8 +47,24 @@ async function handleTakeScreenshot(): Promise<void> {
 }
 
 async function createFeedback(body: SendFeedbackBodyInterface) {
+  // TODO: Create Feedback
   try {
-    // TODO: Create Feedback
+    const res = await fetch(`https://${config.PROJECT_ID}.api.deskree.com/api/v1/rest/collections/feedbacks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if ( !res.ok ) {
+      throw new Error('Error creating feedback');
+    }
+    const { data } = await res.json();
+    
+    if (data !== undefined) {
+      emit('feedback_uid', data.uid);
+    } else {
+      throw new Error("Couldn't create feedback");
+    }
   } catch (e: any) {
     console.error(e);
     showError.value = true;
@@ -61,8 +77,19 @@ async function createFeedback(body: SendFeedbackBodyInterface) {
 }
 
 async function createIssueOnGitHub(body: GitHubCreateIssueInterface) {
+  // TODO: Create Issue on GitHub
   try {
-    // TODO: Create Issue on GitHub
+    const res = await fetch(`https://${config.PROJECT_ID}.api.deskree.com/api/v1/integrations/github/repos/${config.GITHUB_USERNAME}/${config.GITHUB_REPONAME}/issues`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error('Error creating issue on GitHub');
+    }
   } catch (e: any) {
     console.error(e);
     showError.value = true;
@@ -95,7 +122,7 @@ async function sendFeedback() {
 
     if (props.feedback.type === 'bug') {
       const gitHubBody: GitHubCreateIssueInterface = {
-        title: 'Bug Found by User',
+        title: 'Automatic Bug Report (Deskree Integration)',
         body: message.value,
       };
 

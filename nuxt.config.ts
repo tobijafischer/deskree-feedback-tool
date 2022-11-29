@@ -20,6 +20,7 @@ export default defineNuxtConfig({
   },
   publicRuntimeConfig: {
     PROJECT_ID: process.env.PROJECT_ID,
+    GITHUB_REPONAME: process.env.GITHUB_REPONAME,
     GITHUB_USERNAME: process.env.GITHUB_USERNAME,
   },
 });
